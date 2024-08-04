@@ -1,4 +1,101 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-// Write your JavaScript code.
+const box = 20;
+let snake = [{ x: 9 * box, y: 9 * box }];
+let direction = '';
+let food = spawnFood();
+let score = 0;
+
+document.addEventListener("keydown", changeDirection);
+const gameInterval = setInterval(game, 150); // Slower interval
+
+function changeDirection(event) {
+    if (event.keyCode == 37 && direction != "RIGHT") {
+        direction = "LEFT";
+    }
+    else if (event.keyCode == 38 && direction != "DOWN") {
+        direction = "UP";
+    }
+    else if (event.keyCode == 39 && direction != "LEFT") {
+        direction = "RIGHT";
+    }
+    else if (event.keyCode == 40 && direction != "UP") {
+        direction = "DOWN";
+    }
+}
+
+function spawnFood() {
+    let newFood;
+    do {
+        newFood = {
+            x: Math.floor(Math.random() * (canvas.width / box)) * box,
+            y: Math.floor(Math.random() * (canvas.height / box)) * box
+        };
+    } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+    return newFood;
+}
+
+function game() {
+    if (isGameOver()) {
+        clearInterval(gameInterval);
+        alert("Game over!! Score: " + score);
+        document.location.reload();
+    }
+    else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawSnake();
+        drawFood();
+        moveSnake();
+        drawScore();
+    }
+}
+
+function drawSnake() {
+    snake.forEach((segment, index) => {
+        ctx.fillStyle = index == 0 ? "green" : "lightgreen";
+        ctx.fillRect(segment.x, segment.y, box, box);
+        ctx.strokeStyle = "darkgreen";
+        ctx.strokeRect(segment.x, segment.y, box, box);
+    });
+}
+
+function drawFood() {
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x, food.y, box, box);
+}
+
+function moveSnake() {
+    const head = { x: snake[0].x, y: snake[0].y };
+
+    if (direction == "LEFT") head.x -= box;
+    if (direction == "UP") head.y -= box;
+    if (direction == "RIGHT") head.x += box;
+    if (direction == "DOWN") head.y += box;
+
+    if (head.x == food.x && head.y == food.y) {
+        score++;
+        food = spawnFood(); // Respawn food at a new location
+    } else {
+        snake.pop();
+    }
+    snake.unshift(head);
+}
+
+function drawScore() {
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + score, box, box);
+}
+
+function isGameOver() {
+    const head = snake[0];
+    if (
+        head.x < 0 || head.x >= canvas.width ||
+        head.y < 0 || head.y >= canvas.height ||
+        snake.slice(1).some(segment => segment.x == head.x && segment.y == head.y)
+    ) {
+        return true;
+    }
+    return false;
+}
