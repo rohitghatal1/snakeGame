@@ -18,5 +18,15 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    background: #000;
+}
+
+canvas {
+    border: 1px solid black;
 }
