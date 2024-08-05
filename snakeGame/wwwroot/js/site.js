@@ -54,16 +54,29 @@ function game() {
 function drawSnake() {
     snake.forEach((segment, index) => {
         ctx.fillStyle = index == 0 ? "green" : "lightgreen";
-        ctx.fillRect(segment.x, segment.y, box, box);
+
+        // Draw circle instead of rectangle
+        ctx.beginPath();
+        ctx.arc(segment.x + box / 2, segment.y + box / 2, box / 2, 0, 2 * Math.PI);
+        ctx.fill();
         ctx.strokeStyle = "darkgreen";
-        ctx.strokeRect(segment.x, segment.y, box, box);
+        ctx.stroke();
     });
 }
 
+
 function drawFood() {
     ctx.fillStyle = "red";
-    ctx.fillRect(food.x, food.y, box, box);
+
+    // Draw a smaller circle for the food
+    const radius = box / 2; // Adjust the radius for a smaller size
+    ctx.beginPath();
+    ctx.arc(food.x + box / 2, food.y + box / 2, radius, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.strokeStyle = "darkred";
+    ctx.stroke();
 }
+
 
 function moveSnake() {
     const head = { x: snake[0].x, y: snake[0].y };
