@@ -6,11 +6,15 @@ let snake = [{ x: 9 * box, y: 9 * box }];
 let direction = '';
 let food = spawnFood();
 let score = 0;
+let isPaused = false;
 
 document.addEventListener("keydown", changeDirection);
 const gameInterval = setInterval(game, 150); // Slower interval
 
 function changeDirection(event) {
+    if (event.keyCode == 32) {
+        isPaused = !isPaused;
+    }
     if (event.keyCode == 37 && direction != "RIGHT") {
         direction = "LEFT";
     }
@@ -37,6 +41,9 @@ function spawnFood() {
 }
 
 function game() {
+    if (isPaused) {
+        return;
+    }
     if (isGameOver()) {
         clearInterval(gameInterval);
         alert("Game over!! Score: " + score);
